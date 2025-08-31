@@ -96,8 +96,15 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
     }
   };
 
-  const getDifficultyStars = (difficulty: number) => {
-    return '★'.repeat(difficulty) + '☆'.repeat(5 - difficulty);
+  const getDifficultyColor = (difficulty: number) => {
+    const colors = {
+      1: 'bg-green-500',
+      2: 'bg-yellow-400', 
+      3: 'bg-orange-400',
+      4: 'bg-red-400',
+      5: 'bg-red-600'
+    };
+    return colors[difficulty as keyof typeof colors];
   };
 
   return (
@@ -214,7 +221,9 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
                   </td>
                   <td className="p-4">{drill.region}</td>
                   <td className="p-4">
-                    <span className="text-yellow-500">{getDifficultyStars(drill.difficulty)}</span>
+                    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm ${getDifficultyColor(drill.difficulty)}`}>
+                      {drill.difficulty}
+                    </span>
                   </td>
                   <td className="p-4">
                     <div className="flex gap-2">

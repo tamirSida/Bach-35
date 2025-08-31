@@ -1,7 +1,7 @@
 'use client';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faMapMarkerAlt, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { Drill } from '@/types/drill';
 
 interface DrillViewProps {
@@ -10,14 +10,15 @@ interface DrillViewProps {
 }
 
 export default function DrillView({ drill, onClose }: DrillViewProps) {
-  const getDifficultyStars = (difficulty: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <FontAwesomeIcon
-        key={i}
-        icon={faStar}
-        className={i < difficulty ? 'text-yellow-500' : 'text-gray-300'}
-      />
-    ));
+  const getDifficultyColor = (difficulty: number) => {
+    const colors = {
+      1: 'bg-green-500',
+      2: 'bg-yellow-400', 
+      3: 'bg-orange-400',
+      4: 'bg-red-400',
+      5: 'bg-red-600'
+    };
+    return colors[difficulty as keyof typeof colors];
   };
 
   return (
@@ -76,9 +77,9 @@ export default function DrillView({ drill, onClose }: DrillViewProps) {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium">דרגת קושי:</span>
-                    <div className="flex gap-1">
-                      {getDifficultyStars(drill.difficulty)}
-                    </div>
+                    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm ${getDifficultyColor(drill.difficulty)}`}>
+                      {drill.difficulty}
+                    </span>
                   </div>
                 </div>
               </div>
