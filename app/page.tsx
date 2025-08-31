@@ -1,22 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import DrillTable from '@/components/DrillTable';
-import DrillView from '@/components/DrillView';
 import DrillForm from '@/components/DrillForm';
 import { Drill, Config } from '@/types/drill';
 import configData from '@/data/config.json';
 
 export default function Home() {
-  const [selectedDrill, setSelectedDrill] = useState<Drill | null>(null);
+  const router = useRouter();
   const [editingDrill, setEditingDrill] = useState<Drill | null>(null);
   const [showDrillForm, setShowDrillForm] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [config] = useState<Config>(configData);
 
   const handleViewDrill = (drill: Drill) => {
-    setSelectedDrill(drill);
+    router.push(`/drill/${drill.id}`);
   };
 
   const handleEditDrill = (drill: Drill) => {
@@ -34,7 +34,6 @@ export default function Home() {
   };
 
   const handleCloseForms = () => {
-    setSelectedDrill(null);
     setEditingDrill(null);
     setShowDrillForm(false);
   };
@@ -51,13 +50,6 @@ export default function Home() {
           refreshTrigger={refreshTrigger}
         />
       </main>
-
-      {selectedDrill && (
-        <DrillView
-          drill={selectedDrill}
-          onClose={handleCloseForms}
-        />
-      )}
 
       {showDrillForm && (
         <DrillForm

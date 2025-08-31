@@ -187,7 +187,7 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
             </thead>
             <tbody>
               {filteredDrills.map((drill) => (
-                <tr key={drill.id} className="table-row border-t cursor-pointer">
+                <tr key={drill.id} className="table-row border-t cursor-pointer" onClick={() => onViewDrill(drill)}>
                   <td className="p-4 font-medium">{drill.name}</td>
                   <td className="p-4">
                     <div className="flex flex-wrap gap-1">
@@ -226,7 +226,7 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
                     </span>
                   </td>
                   <td className="p-4">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => onViewDrill(drill)}
                         className="text-blue-600 hover:text-blue-800 p-1"

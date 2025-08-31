@@ -1,3 +1,9 @@
+export interface DrillImage {
+  url: string;
+  title: string;
+  publicId: string;
+}
+
 export interface Drill {
   id?: string;
   name: string;
@@ -6,7 +12,7 @@ export interface Drill {
   region: string;
   difficulty: 1 | 2 | 3 | 4 | 5;
   description: string;
-  images: string[];
+  images: DrillImage[];
   createdAt?: Date;
   updatedAt?: Date;
 }

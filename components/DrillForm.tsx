@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Drill, Config } from '@/types/drill';
+import { Drill, Config, DrillImage } from '@/types/drill';
+import ImageUpload from '@/components/ImageUpload';
 import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -22,7 +23,7 @@ export default function DrillForm({ drill, config, onClose, onSave }: DrillFormP
     region: '',
     difficulty: 1 as 1 | 2 | 3 | 4 | 5,
     description: '',
-    images: [] as string[]
+    images: [] as DrillImage[]
   });
 
   useEffect(() => {
@@ -57,21 +58,8 @@ export default function DrillForm({ drill, config, onClose, onSave }: DrillFormP
     }));
   };
 
-  const handleAddImage = () => {
-    const imagePath = prompt('הכנס נתיב לתמונה (מתוך תיקיית public):');
-    if (imagePath) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...prev.images, imagePath]
-      }));
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
+  const handleImagesChange = (images: DrillImage[]) => {
+    setFormData(prev => ({ ...prev, images }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -214,34 +202,10 @@ export default function DrillForm({ drill, config, onClose, onSave }: DrillFormP
           </div>
 
           <div className="mt-6">
-            <div className="flex justify-between items-center mb-3">
-              <button
-                type="button"
-                onClick={handleAddImage}
-                className="btn-primary flex items-center gap-2"
-              >
-                <FontAwesomeIcon icon={faPlus} />
-                הוסף תמונה
-              </button>
-              <label className="text-sm font-medium">תמונות</label>
-            </div>
-            
-            {formData.images.length > 0 && (
-              <div className="space-y-2 max-h-32 overflow-y-auto border border-gray-200 rounded p-3">
-                {formData.images.map((imagePath, index) => (
-                  <div key={index} className="flex justify-between items-center bg-gray-50 p-2 rounded">
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(index)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                    <span className="text-sm text-gray-700 flex-1 text-right mr-3">{imagePath}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ImageUpload
+              images={formData.images}
+              onImagesChange={handleImagesChange}
+            />
           </div>
 
           <div className="flex gap-4 justify-end mt-8 pt-4 border-t border-gray-200">
