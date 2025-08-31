@@ -98,7 +98,7 @@ export default function DrillPage() {
         <div className="mb-6">
           <button
             onClick={() => router.push('/')}
-            className="flex items-center gap-2 text-red-700 hover:text-red-600 mb-4"
+            className="btn-secondary flex items-center gap-2 mb-4"
           >
             <FontAwesomeIcon icon={faArrowRight} />
             חזור לרשימת התרגילים

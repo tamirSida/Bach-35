@@ -83,6 +83,65 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
     setFilteredDrills(filtered);
   };
 
+  const getAvailableOptions = () => {
+    let baseFilteredDrills = drills;
+
+    if (searchTerm) {
+      baseFilteredDrills = baseFilteredDrills.filter(drill =>
+        drill.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        drill.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    const availableTechniques = new Set<string>();
+    const availableTerrains = new Set<string>();
+    const availableRegions = new Set<string>();
+    const availableDifficulties = new Set<string>();
+
+    baseFilteredDrills.forEach(drill => {
+      if (!filters.terrain || drill.terrains.includes(filters.terrain)) {
+        if (!filters.region || drill.region === filters.region) {
+          if (!filters.difficulty || drill.difficulty.toString() === filters.difficulty) {
+            drill.techniques.forEach(t => availableTechniques.add(t));
+          }
+        }
+      }
+
+      if (!filters.technique || drill.techniques.includes(filters.technique)) {
+        if (!filters.region || drill.region === filters.region) {
+          if (!filters.difficulty || drill.difficulty.toString() === filters.difficulty) {
+            drill.terrains.forEach(t => availableTerrains.add(t));
+          }
+        }
+      }
+
+      if (!filters.technique || drill.techniques.includes(filters.technique)) {
+        if (!filters.terrain || drill.terrains.includes(filters.terrain)) {
+          if (!filters.difficulty || drill.difficulty.toString() === filters.difficulty) {
+            availableRegions.add(drill.region);
+          }
+        }
+      }
+
+      if (!filters.technique || drill.techniques.includes(filters.technique)) {
+        if (!filters.terrain || drill.terrains.includes(filters.terrain)) {
+          if (!filters.region || drill.region === filters.region) {
+            availableDifficulties.add(drill.difficulty.toString());
+          }
+        }
+      }
+    });
+
+    return {
+      techniques: Array.from(availableTechniques),
+      terrains: Array.from(availableTerrains),
+      regions: Array.from(availableRegions),
+      difficulties: Array.from(availableDifficulties)
+    };
+  };
+
+  const availableOptions = getAvailableOptions();
+
   const handleDelete = async (drillId: string) => {
     if (!user || !drillId) return;
     
@@ -127,10 +186,10 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
           <select
             value={filters.technique}
             onChange={(e) => setFilters({...filters, technique: e.target.value})}
-            className="p-2 border border-gray-300 rounded text-right"
+            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
           >
             <option value="">כל הטכניקות</option>
-            {config.techniques.map(technique => (
+            {availableOptions.techniques.map(technique => (
               <option key={technique} value={technique}>{technique}</option>
             ))}
           </select>
@@ -138,10 +197,10 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
           <select
             value={filters.terrain}
             onChange={(e) => setFilters({...filters, terrain: e.target.value})}
-            className="p-2 border border-gray-300 rounded text-right"
+            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
           >
             <option value="">כל התוואי</option>
-            {config.terrains.map(terrain => (
+            {availableOptions.terrains.map(terrain => (
               <option key={terrain} value={terrain}>{terrain}</option>
             ))}
           </select>
@@ -149,10 +208,10 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
           <select
             value={filters.region}
             onChange={(e) => setFilters({...filters, region: e.target.value})}
-            className="p-2 border border-gray-300 rounded text-right"
+            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
           >
             <option value="">כל האזורים</option>
-            {config.regions.map(region => (
+            {availableOptions.regions.map(region => (
               <option key={region} value={region}>{region}</option>
             ))}
           </select>
@@ -160,14 +219,12 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
           <select
             value={filters.difficulty}
             onChange={(e) => setFilters({...filters, difficulty: e.target.value})}
-            className="p-2 border border-gray-300 rounded text-right"
+            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
           >
             <option value="">כל הדרגות</option>
-            <option value="1">דרגה 1</option>
-            <option value="2">דרגה 2</option>
-            <option value="3">דרגה 3</option>
-            <option value="4">דרגה 4</option>
-            <option value="5">דרגה 5</option>
+            {availableOptions.difficulties.sort().map(difficulty => (
+              <option key={difficulty} value={difficulty}>דרגה {difficulty}</option>
+            ))}
           </select>
         </div>
       </div>
@@ -229,7 +286,7 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
                     <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => onViewDrill(drill)}
-                        className="text-blue-600 hover:text-blue-800 p-1"
+                        className="btn-icon text-blue-600 hover:text-blue-800"
                         title="צפה בתרגיל"
                       >
                         <FontAwesomeIcon icon={faEye} />
@@ -238,14 +295,14 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
                         <>
                           <button
                             onClick={() => onEditDrill(drill)}
-                            className="text-green-600 hover:text-green-800 p-1"
+                            className="btn-icon text-green-600 hover:text-green-800"
                             title="ערוך תרגיל"
                           >
                             <FontAwesomeIcon icon={faEdit} />
                           </button>
                           <button
                             onClick={() => drill.id && handleDelete(drill.id)}
-                            className="text-red-600 hover:text-red-800 p-1"
+                            className="btn-icon text-red-600 hover:text-red-800"
                             title="מחק תרגיל"
                           >
                             <FontAwesomeIcon icon={faTrash} />

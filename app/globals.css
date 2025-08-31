@@ -39,15 +39,57 @@ body {
   background-color: var(--red-dark);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(139, 21, 56, 0.2);
 }
 
 .btn-primary:hover {
   background-color: var(--red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 21, 56, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(139, 21, 56, 0.2);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--red-dark);
+  border: 2px solid var(--red-dark);
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--red-dark);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 21, 56, 0.2);
+}
+
+.btn-icon {
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+}
+
+.btn-icon:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .table-header {
@@ -55,6 +97,12 @@ body {
   border-bottom: 2px solid var(--gray-medium);
 }
 
+.table-row {
+  transition: all 0.2s ease;
+}
+
 .table-row:hover {
   background-color: var(--gray-light);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

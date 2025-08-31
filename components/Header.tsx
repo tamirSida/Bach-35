@@ -65,7 +65,7 @@ export default function Header({ onAddDrill }: HeaderProps) {
           {user ? (
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-red-700 hover:text-red-600 cursor-pointer"
+              className="btn-secondary flex items-center gap-2"
             >
               <FontAwesomeIcon icon={faSignOutAlt} />
               התנתק
@@ -73,7 +73,7 @@ export default function Header({ onAddDrill }: HeaderProps) {
           ) : (
             <button
               onClick={() => setShowLogin(true)}
-              className="flex items-center gap-2 text-red-700 hover:text-red-600 cursor-pointer"
+              className="btn-secondary flex items-center gap-2"
             >
               <FontAwesomeIcon icon={faSignInAlt} />
               התחבר
@@ -109,7 +109,7 @@ export default function Header({ onAddDrill }: HeaderProps) {
               <button
                 type="button"
                 onClick={() => setShowLogin(false)}
-                className="px-4 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+                className="btn-secondary"
               >
                 ביטול
               </button>

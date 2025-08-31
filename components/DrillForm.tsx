@@ -212,7 +212,7 @@ export default function DrillForm({ drill, config, onClose, onSave }: DrillFormP
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2 text-gray-600 border border-gray-300 rounded hover:bg-gray-50"
+              className="btn-secondary px-6 py-2"
             >
               ביטול
             </button>
