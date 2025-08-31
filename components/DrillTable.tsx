@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import MultiSelectFilter from '@/components/MultiSelectFilter';
 import { Drill, Config } from '@/types/drill';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
@@ -20,10 +21,10 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
   const [filteredDrills, setFilteredDrills] = useState<Drill[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
-    technique: '',
-    terrain: '',
-    region: '',
-    difficulty: ''
+    techniques: [] as string[],
+    terrains: [] as string[],
+    regions: [] as string[],
+    difficulties: [] as string[]
   });
   const [user] = useAuthState(auth);
 
@@ -60,24 +61,28 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
       );
     }
 
-    if (filters.technique) {
+    if (filters.techniques.length > 0) {
       filtered = filtered.filter(drill =>
-        drill.techniques.includes(filters.technique)
+        filters.techniques.some(technique => drill.techniques.includes(technique))
       );
     }
 
-    if (filters.terrain) {
+    if (filters.terrains.length > 0) {
       filtered = filtered.filter(drill =>
-        drill.terrains.includes(filters.terrain)
+        filters.terrains.some(terrain => drill.terrains.includes(terrain))
       );
     }
 
-    if (filters.region) {
-      filtered = filtered.filter(drill => drill.region === filters.region);
+    if (filters.regions.length > 0) {
+      filtered = filtered.filter(drill => 
+        filters.regions.includes(drill.region)
+      );
     }
 
-    if (filters.difficulty) {
-      filtered = filtered.filter(drill => drill.difficulty.toString() === filters.difficulty);
+    if (filters.difficulties.length > 0) {
+      filtered = filtered.filter(drill => 
+        filters.difficulties.includes(drill.difficulty.toString())
+      );
     }
 
     setFilteredDrills(filtered);
@@ -99,36 +104,30 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
     const availableDifficulties = new Set<string>();
 
     baseFilteredDrills.forEach(drill => {
-      if (!filters.terrain || drill.terrains.includes(filters.terrain)) {
-        if (!filters.region || drill.region === filters.region) {
-          if (!filters.difficulty || drill.difficulty.toString() === filters.difficulty) {
-            drill.techniques.forEach(t => availableTechniques.add(t));
-          }
-        }
+      const matchesTerrains = filters.terrains.length === 0 || 
+        filters.terrains.some(terrain => drill.terrains.includes(terrain));
+      const matchesRegions = filters.regions.length === 0 || 
+        filters.regions.includes(drill.region);
+      const matchesDifficulties = filters.difficulties.length === 0 || 
+        filters.difficulties.includes(drill.difficulty.toString());
+
+      if (matchesTerrains && matchesRegions && matchesDifficulties) {
+        drill.techniques.forEach(t => availableTechniques.add(t));
       }
 
-      if (!filters.technique || drill.techniques.includes(filters.technique)) {
-        if (!filters.region || drill.region === filters.region) {
-          if (!filters.difficulty || drill.difficulty.toString() === filters.difficulty) {
-            drill.terrains.forEach(t => availableTerrains.add(t));
-          }
-        }
+      const matchesTechniques = filters.techniques.length === 0 || 
+        filters.techniques.some(technique => drill.techniques.includes(technique));
+
+      if (matchesTechniques && matchesRegions && matchesDifficulties) {
+        drill.terrains.forEach(t => availableTerrains.add(t));
       }
 
-      if (!filters.technique || drill.techniques.includes(filters.technique)) {
-        if (!filters.terrain || drill.terrains.includes(filters.terrain)) {
-          if (!filters.difficulty || drill.difficulty.toString() === filters.difficulty) {
-            availableRegions.add(drill.region);
-          }
-        }
+      if (matchesTechniques && matchesTerrains && matchesDifficulties) {
+        availableRegions.add(drill.region);
       }
 
-      if (!filters.technique || drill.techniques.includes(filters.technique)) {
-        if (!filters.terrain || drill.terrains.includes(filters.terrain)) {
-          if (!filters.region || drill.region === filters.region) {
-            availableDifficulties.add(drill.difficulty.toString());
-          }
-        }
+      if (matchesTechniques && matchesTerrains && matchesRegions) {
+        availableDifficulties.add(drill.difficulty.toString());
       }
     });
 
@@ -171,61 +170,49 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
       <div className="mb-6 bg-white p-4 rounded-lg shadow-sm border">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="relative flex-1">
-            <FontAwesomeIcon icon={faSearch} className="absolute right-3 top-3 text-gray-400" />
+            <FontAwesomeIcon icon={faSearch} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
             <input
               type="text"
               placeholder="חיפוש תרגילים..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-3 pr-10 border border-gray-300 rounded text-right"
+              className="w-full p-3 pr-10 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <select
-            value={filters.technique}
-            onChange={(e) => setFilters({...filters, technique: e.target.value})}
-            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
-          >
-            <option value="">כל הטכניקות</option>
-            {availableOptions.techniques.map(technique => (
-              <option key={technique} value={technique}>{technique}</option>
-            ))}
-          </select>
+          <MultiSelectFilter
+            label="טכניקות"
+            options={availableOptions.techniques}
+            selectedValues={filters.techniques}
+            onSelectionChange={(techniques) => setFilters({...filters, techniques})}
+            placeholder="כל הטכניקות"
+          />
 
-          <select
-            value={filters.terrain}
-            onChange={(e) => setFilters({...filters, terrain: e.target.value})}
-            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
-          >
-            <option value="">כל התוואי</option>
-            {availableOptions.terrains.map(terrain => (
-              <option key={terrain} value={terrain}>{terrain}</option>
-            ))}
-          </select>
+          <MultiSelectFilter
+            label="תוואי שטח"
+            options={availableOptions.terrains}
+            selectedValues={filters.terrains}
+            onSelectionChange={(terrains) => setFilters({...filters, terrains})}
+            placeholder="כל התוואי"
+          />
 
-          <select
-            value={filters.region}
-            onChange={(e) => setFilters({...filters, region: e.target.value})}
-            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
-          >
-            <option value="">כל האזורים</option>
-            {availableOptions.regions.map(region => (
-              <option key={region} value={region}>{region}</option>
-            ))}
-          </select>
+          <MultiSelectFilter
+            label="אזורים"
+            options={availableOptions.regions}
+            selectedValues={filters.regions}
+            onSelectionChange={(regions) => setFilters({...filters, regions})}
+            placeholder="כל האזורים"
+          />
 
-          <select
-            value={filters.difficulty}
-            onChange={(e) => setFilters({...filters, difficulty: e.target.value})}
-            className="p-3 border border-gray-300 rounded text-right bg-white hover:border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-colors"
-          >
-            <option value="">כל הדרגות</option>
-            {availableOptions.difficulties.sort().map(difficulty => (
-              <option key={difficulty} value={difficulty}>דרגה {difficulty}</option>
-            ))}
-          </select>
+          <MultiSelectFilter
+            label="דרגות קושי"
+            options={availableOptions.difficulties.sort().map(d => `דרגה ${d}`)}
+            selectedValues={filters.difficulties.map(d => `דרגה ${d}`)}
+            onSelectionChange={(difficulties) => setFilters({...filters, difficulties: difficulties.map(d => d.replace('דרגה ', ''))})}
+            placeholder="כל הדרגות"
+          />
         </div>
       </div>
 
