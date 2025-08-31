@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faEye, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faEye, faEdit, faTrash, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import MultiSelectFilter from '@/components/MultiSelectFilter';
 import { Drill, Config } from '@/types/drill';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
@@ -20,6 +20,7 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
   const [drills, setDrills] = useState<Drill[]>([]);
   const [filteredDrills, setFilteredDrills] = useState<Drill[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     techniques: [] as string[],
     terrains: [] as string[],
@@ -37,6 +38,7 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
   }, [drills, searchTerm, filters]);
 
   const fetchDrills = async () => {
+    setLoading(true);
     try {
       const querySnapshot = await getDocs(collection(db, 'drills'));
       const drillsData = querySnapshot.docs.map(doc => ({
@@ -48,6 +50,8 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
       setDrills(drillsData);
     } catch (error) {
       console.error('Error fetching drills:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -387,7 +391,14 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
         ))}
       </div>
 
-      {filteredDrills.length === 0 && (
+      {loading && (
+        <div className="p-8 text-center">
+          <FontAwesomeIcon icon={faSpinner} className="animate-spin text-red-600 text-2xl mb-2" />
+          <div className="text-gray-500">טוען תרגילים...</div>
+        </div>
+      )}
+
+      {!loading && filteredDrills.length === 0 && (
         <div className="p-8 text-center text-gray-500">
           לא נמצאו תרגילים התואמים לחיפוש
         </div>
