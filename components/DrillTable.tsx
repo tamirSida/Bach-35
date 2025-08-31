@@ -312,14 +312,20 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
             className="bg-white rounded-lg shadow-sm border p-4 cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => onViewDrill(drill)}
           >
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex items-center gap-2">
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-gray-900 text-right">{drill.name}</h3>
+              
+              <div className="flex items-center gap-2 text-right">
+                <span className="text-sm text-gray-700 font-medium">דרגת קושי</span>
                 <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm ${getDifficultyColor(drill.difficulty)}`}>
                   {drill.difficulty}
                 </span>
-                <span className="text-sm text-gray-600">{drill.region}</span>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 text-right flex-1 mr-4">{drill.name}</h3>
+              
+              <div className="text-right">
+                <span className="text-sm text-gray-700 font-medium">תא שטח: </span>
+                <span className="text-sm text-gray-900">{drill.region}</span>
+              </div>
             </div>
 
             <div className="space-y-2 mb-3">
