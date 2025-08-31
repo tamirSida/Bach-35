@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Prevent FontAwesome FOUC */
+.svg-inline--fa {
+  display: inline-block;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #2d2d2d;

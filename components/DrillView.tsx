@@ -97,17 +97,20 @@ export default function DrillView({ drill, onClose }: DrillViewProps) {
             <div>
               <h3 className="text-lg font-semibold mb-3 text-red-700">תמונות</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {drill.images.map((imagePath, index) => (
+                {drill.images.map((image, index) => (
                   <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
                     <img
-                      src={imagePath}
-                      alt={`תמונה ${index + 1} עבור ${drill.name}`}
+                      src={image.url}
+                      alt={image.title}
                       className="w-full h-48 object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '/placeholder-image.svg';
                       }}
                     />
+                    <div className="p-2 bg-gray-50">
+                      <p className="text-sm text-gray-700 text-center">{image.title}</p>
+                    </div>
                   </div>
                 ))}
               </div>

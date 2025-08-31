@@ -15,6 +15,8 @@ export default function DrillPage() {
   const [drill, setDrill] = useState<Drill | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
   useEffect(() => {
     fetchDrill();
@@ -57,14 +59,42 @@ export default function DrillPage() {
   };
 
   const nextImage = () => {
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
+    }
+  };
+
+  const prevImage = () => {
     if (drill?.images && currentImageIndex < drill.images.length - 1) {
       setCurrentImageIndex(prev => prev + 1);
     }
   };
 
-  const prevImage = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(prev => prev - 1);
+  // Swipe handling
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    // In RTL: swipe left = next image (index decreases), swipe right = prev image (index increases)
+    if (isLeftSwipe) {
+      nextImage(); // Go to next (lower index)
+    }
+    if (isRightSwipe) {
+      prevImage(); // Go to prev (higher index)
     }
   };
 
@@ -167,29 +197,35 @@ export default function DrillPage() {
               <div className="mt-8">
                 <h3 className="text-xl font-semibold mb-4 text-red-700">תמונות</h3>
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="relative">
+                  <div 
+                    className="relative"
+                    onTouchStart={onTouchStart}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
+                  >
                     <img
                       src={drill.images[currentImageIndex].url}
                       alt={drill.images[currentImageIndex].title}
-                      className="w-full h-96 object-cover"
+                      className="w-full h-96 object-cover select-none"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '/placeholder-image.svg';
                       }}
+                      draggable={false}
                     />
                     
                     {drill.images.length > 1 && (
                       <>
                         <button
                           onClick={prevImage}
-                          disabled={currentImageIndex === 0}
+                          disabled={currentImageIndex === drill.images.length - 1}
                           className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full disabled:opacity-30 hover:bg-opacity-70"
                         >
                           <FontAwesomeIcon icon={faChevronLeft} />
                         </button>
                         <button
                           onClick={nextImage}
-                          disabled={currentImageIndex === drill.images.length - 1}
+                          disabled={currentImageIndex === 0}
                           className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full disabled:opacity-30 hover:bg-opacity-70"
                         >
                           <FontAwesomeIcon icon={faChevronRight} />

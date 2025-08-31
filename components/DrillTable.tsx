@@ -181,7 +181,7 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <MultiSelectFilter
             label="טכניקות"
             options={availableOptions.techniques}
@@ -216,100 +216,182 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="table-header">
-              <tr>
-                <th className="p-4 text-right font-semibold">שם התרגיל</th>
-                <th className="p-4 text-right font-semibold">טכניקות</th>
-                <th className="p-4 text-right font-semibold">תוואי שטח</th>
-                <th className="p-4 text-right font-semibold">אזור</th>
-                <th className="p-4 text-right font-semibold">דרגת קושי</th>
-                <th className="p-4 text-right font-semibold">פעולות</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredDrills.map((drill) => (
-                <tr key={drill.id} className="table-row border-t cursor-pointer" onClick={() => onViewDrill(drill)}>
-                  <td className="p-4 font-medium">{drill.name}</td>
-                  <td className="p-4">
-                    <div className="flex flex-wrap gap-1">
-                      {drill.techniques.slice(0, 2).map(technique => (
-                        <span
-                          key={technique}
-                          className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
-                        >
-                          {technique}
-                        </span>
-                      ))}
-                      {drill.techniques.length > 2 && (
-                        <span className="text-gray-500 text-xs">+{drill.techniques.length - 2}</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex flex-wrap gap-1">
-                      {drill.terrains.slice(0, 2).map(terrain => (
-                        <span
-                          key={terrain}
-                          className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
-                        >
-                          {terrain}
-                        </span>
-                      ))}
-                      {drill.terrains.length > 2 && (
-                        <span className="text-gray-500 text-xs">+{drill.terrains.length - 2}</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-4">{drill.region}</td>
-                  <td className="p-4">
-                    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm ${getDifficultyColor(drill.difficulty)}`}>
-                      {drill.difficulty}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        onClick={() => onViewDrill(drill)}
-                        className="btn-icon text-blue-600 hover:text-blue-800"
-                        title="צפה בתרגיל"
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white rounded-lg shadow-sm border overflow-hidden">
+        <table className="w-full">
+          <thead className="table-header">
+            <tr>
+              <th className="p-4 text-right font-semibold">שם התרגיל</th>
+              <th className="p-4 text-right font-semibold">טכניקות</th>
+              <th className="p-4 text-right font-semibold">תוואי שטח</th>
+              <th className="p-4 text-right font-semibold">אזור</th>
+              <th className="p-4 text-right font-semibold">דרגת קושי</th>
+              <th className="p-4 text-right font-semibold">פעולות</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredDrills.map((drill) => (
+              <tr key={drill.id} className="table-row border-t cursor-pointer" onClick={() => onViewDrill(drill)}>
+                <td className="p-4 font-medium">{drill.name}</td>
+                <td className="p-4">
+                  <div className="flex flex-wrap gap-1">
+                    {drill.techniques.slice(0, 2).map(technique => (
+                      <span
+                        key={technique}
+                        className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
                       >
-                        <FontAwesomeIcon icon={faEye} />
-                      </button>
-                      {user && onEditDrill && (
-                        <>
-                          <button
-                            onClick={() => onEditDrill(drill)}
-                            className="btn-icon text-green-600 hover:text-green-800"
-                            title="ערוך תרגיל"
-                          >
-                            <FontAwesomeIcon icon={faEdit} />
-                          </button>
-                          <button
-                            onClick={() => drill.id && handleDelete(drill.id)}
-                            className="btn-icon text-red-600 hover:text-red-800"
-                            title="מחק תרגיל"
-                          >
-                            <FontAwesomeIcon icon={faTrash} />
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredDrills.length === 0 && (
-          <div className="p-8 text-center text-gray-500">
-            לא נמצאו תרגילים התואמים לחיפוש
-          </div>
-        )}
+                        {technique}
+                      </span>
+                    ))}
+                    {drill.techniques.length > 2 && (
+                      <span className="text-gray-500 text-xs">+{drill.techniques.length - 2}</span>
+                    )}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="flex flex-wrap gap-1">
+                    {drill.terrains.slice(0, 2).map(terrain => (
+                      <span
+                        key={terrain}
+                        className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                      >
+                        {terrain}
+                      </span>
+                    ))}
+                    {drill.terrains.length > 2 && (
+                      <span className="text-gray-500 text-xs">+{drill.terrains.length - 2}</span>
+                    )}
+                  </div>
+                </td>
+                <td className="p-4">{drill.region}</td>
+                <td className="p-4">
+                  <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm ${getDifficultyColor(drill.difficulty)}`}>
+                    {drill.difficulty}
+                  </span>
+                </td>
+                <td className="p-4">
+                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => onViewDrill(drill)}
+                      className="btn-icon text-blue-600 hover:text-blue-800"
+                      title="צפה בתרגיל"
+                    >
+                      <FontAwesomeIcon icon={faEye} />
+                    </button>
+                    {user && onEditDrill && (
+                      <>
+                        <button
+                          onClick={() => onEditDrill(drill)}
+                          className="btn-icon text-green-600 hover:text-green-800"
+                          title="ערוך תרגיל"
+                        >
+                          <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                        <button
+                          onClick={() => drill.id && handleDelete(drill.id)}
+                          className="btn-icon text-red-600 hover:text-red-800"
+                          title="מחק תרגיל"
+                        >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {filteredDrills.map((drill) => (
+          <div 
+            key={drill.id} 
+            className="bg-white rounded-lg shadow-sm border p-4 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => onViewDrill(drill)}
+          >
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-white font-bold text-sm ${getDifficultyColor(drill.difficulty)}`}>
+                  {drill.difficulty}
+                </span>
+                <span className="text-sm text-gray-600">{drill.region}</span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 text-right flex-1 mr-4">{drill.name}</h3>
+            </div>
+
+            <div className="space-y-2 mb-3">
+              <div>
+                <span className="text-xs text-red-700 font-medium">טכניקות:</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {drill.techniques.slice(0, 3).map(technique => (
+                    <span
+                      key={technique}
+                      className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs"
+                    >
+                      {technique}
+                    </span>
+                  ))}
+                  {drill.techniques.length > 3 && (
+                    <span className="text-gray-500 text-xs">+{drill.techniques.length - 3}</span>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <span className="text-xs text-gray-700 font-medium">תוואי:</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {drill.terrains.slice(0, 3).map(terrain => (
+                    <span
+                      key={terrain}
+                      className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                    >
+                      {terrain}
+                    </span>
+                  ))}
+                  {drill.terrains.length > 3 && (
+                    <span className="text-gray-500 text-xs">+{drill.terrains.length - 3}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {user && onEditDrill && (
+              <div className="flex gap-2 pt-3 border-t border-gray-100" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={() => onViewDrill(drill)}
+                  className="btn-icon text-blue-600 hover:text-blue-800"
+                  title="צפה בתרגיל"
+                >
+                  <FontAwesomeIcon icon={faEye} />
+                </button>
+                <button
+                  onClick={() => onEditDrill(drill)}
+                  className="btn-icon text-green-600 hover:text-green-800"
+                  title="ערוך תרגיל"
+                >
+                  <FontAwesomeIcon icon={faEdit} />
+                </button>
+                <button
+                  onClick={() => drill.id && handleDelete(drill.id)}
+                  className="btn-icon text-red-600 hover:text-red-800"
+                  title="מחק תרגיל"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {filteredDrills.length === 0 && (
+        <div className="p-8 text-center text-gray-500">
+          לא נמצאו תרגילים התואמים לחיפוש
+        </div>
+      )}
     </div>
   );
 }

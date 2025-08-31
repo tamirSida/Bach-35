@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Drill, Config, DrillImage } from '@/types/drill';
 import ImageUpload from '@/components/ImageUpload';
 import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';

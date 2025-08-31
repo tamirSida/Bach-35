@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "@/lib/fontawesome";
 
 export const metadata: Metadata = {
   title: "באח 35 - מאגר תרגילים",

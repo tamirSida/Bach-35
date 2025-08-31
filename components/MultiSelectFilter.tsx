@@ -13,7 +13,6 @@ interface MultiSelectFilterProps {
 }
 
 export default function MultiSelectFilter({ 
-  label, 
   options, 
   selectedValues, 
   onSelectionChange, 
