@@ -331,35 +331,29 @@ export default function DrillTable({ onViewDrill, onEditDrill, config, refreshTr
             <div className="space-y-2 mb-3">
               <div>
                 <span className="text-xs text-red-700 font-medium">טכניקות:</span>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {drill.techniques.slice(0, 3).map(technique => (
+                <div className="flex gap-2 mt-1 overflow-x-auto pb-1" style={{scrollbarWidth: 'thin'}}>
+                  {drill.techniques.map(technique => (
                     <span
                       key={technique}
-                      className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs"
+                      className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs whitespace-nowrap flex-shrink-0"
                     >
                       {technique}
                     </span>
                   ))}
-                  {drill.techniques.length > 3 && (
-                    <span className="text-gray-500 text-xs">+{drill.techniques.length - 3}</span>
-                  )}
                 </div>
               </div>
 
               <div>
                 <span className="text-xs text-gray-700 font-medium">תוואי:</span>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {drill.terrains.slice(0, 3).map(terrain => (
+                <div className="flex gap-2 mt-1 overflow-x-auto pb-1" style={{scrollbarWidth: 'thin'}}>
+                  {drill.terrains.map(terrain => (
                     <span
                       key={terrain}
-                      className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs whitespace-nowrap flex-shrink-0"
                     >
                       {terrain}
                     </span>
                   ))}
-                  {drill.terrains.length > 3 && (
-                    <span className="text-gray-500 text-xs">+{drill.terrains.length - 3}</span>
-                  )}
                 </div>
               </div>
             </div>
